@@ -18,11 +18,10 @@ cc.Class({
         this.setMoveAction();
     },
     updateSize:function(){
-        this.width = this.level*10;
-        this.height = this.level*10;
+        this.node.setContentSize(this.level*10,this.level*10);
     },
     setMoveAction:function(){
-        this.node.on(cc.Node.EventType.TOUCH_MOVE, function (event) {
+        this.node.parent.on(cc.Node.EventType.TOUCH_MOVE, function (event) {
             this.opacity = 255;
             var delta = event.touch.getDelta();
             this.x += delta.x;
@@ -40,6 +39,6 @@ cc.Class({
         }, this.node);
     },
     stopMove:function () {
-        this.node.off(this.node);
+        this.node.parent.off(this.node);
     }
 });

@@ -2,6 +2,10 @@ const Player = require('player');
 cc.Class({
     extends: cc.Component,
     properties: {
+        ground: {
+            default: null,
+            type: cc.Node
+        },
         // 引用circle预制资源
         circlePrefab: {
             default: null,
@@ -25,10 +29,33 @@ cc.Class({
             default: null,
             type: cc.Node
         },
+        gameMsgNode: {
+            default: null,
+            type: cc.Node
+        },
+        // 背景音乐资源
+        /*bgAudio: {
+            default: null,
+            type: cc.AudioClip
+        },*/
+        // 得分音效资源
+        levelUpAudio: {
+            default: null,
+            type: cc.AudioClip
+        },
+        // gameOver资源
+        gameOverAudio: {
+            default: null,
+            type: cc.AudioClip
+        },
     },
     onLoad () {
+        var size = cc.view.getFrameSize();
+        this.ground.width = size.width;
+        this.ground.height = size.height;
         this.enabled = false;
         this.gameOverNode.active = false;
+        this.gameMsgNode.active = false;
         this.resetScore();
         this.circlePool = new cc.NodePool('circle');
         this.currentCirclePool = new Array();
@@ -38,11 +65,32 @@ cc.Class({
         this.baseSped = this.node.width/3;
     },
     onStartGame: function () {
+        this.bgMusic = new Audio();
+        this.resetScore();
         this.startBtn.node.active = false; //隐藏
         this.enabled = true;
         this.gameOverNode.active = false;
+        this.gameMsgNode.active = true;
         this.player.startMoveAt(cc.v2(0, 0));
-        this.spawnNewCircle();
+        this.schedule(function() {
+            this.gameMsgNode.active = false;
+            this.spawnNewCircle();
+        },1, 0);
+        this.stopAudio(this.gameOverAudioId);
+        this.playBGMusic('http://118.24.126.134:3000/audio/backgroundMusic.m4a');
+    },
+    playBGMusic(url){
+        this.bgMusic.src = url;
+        this.bgMusic.play();
+    },
+    stopBGMusic:function(){
+        this.bgMusic.pause();
+    },
+    playAudio:function(audio,loop){
+        return cc.audioEngine.playEffect(audio, loop);
+    },
+    stopAudio:function(audioId){
+        cc.audioEngine.stopEffect(audioId);
     },
     spawnNewCircle:function() {
         // 使用给定的模板在场景中生成一个新节点
@@ -145,15 +193,20 @@ cc.Class({
     resetScore: function () {
         this.score = 0;
         this.scoreDisplay.string = 'Score: ' + this.score.toString();
+        this.player.level = 2;
+        this.player.updateSize();
     },
     gainScore: function (circle) {
         this.score += 1;
         // 更新 scoreDisplay Label 的文字
         this.scoreDisplay.string = 'Score: ' + this.score.toString();
-        this.circlePool.put(circle.node);
+        circle.node.removeFromParent();
         this.spawnNewCircle();
         this.player.level = this.score/10+2;
-        this.player.node.setContentSize(this.player.level*10,this.player.level*10);
+        if(this.score%10==0){
+            this.playAudio(this.levelUpAudio,false);
+        }
+        this.player.updateSize();
     },
     gameOver: function () {
         this.gameOverNode.active = true;
@@ -161,6 +214,8 @@ cc.Class({
         this.player.stopMove();
         this.destroyCurrentCircles();
         this.startBtn.node.active = true;
+        this.stopBGMusic();
+        this.gameOverAudioId = this.playAudio(this.gameOverAudio,false);
     },
     destroyCurrentCircles:function(){
         for (var i in this.currentCirclePool){
