@@ -39,7 +39,7 @@ cc.Class({
             type: cc.AudioClip
         },*/
         // 得分音效资源
-        levelUpAudio: {
+        scoreAudio: {
             default: null,
             type: cc.AudioClip
         },
@@ -50,7 +50,7 @@ cc.Class({
         },
     },
     onLoad () {
-        var size = cc.view.getFrameSize();
+        let size = cc.director.getWinSizeInPixels();
         this.ground.width = size.width;
         this.ground.height = size.height;
         this.enabled = false;

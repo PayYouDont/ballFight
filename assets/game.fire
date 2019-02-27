@@ -109,7 +109,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 640,
-      "height": 960
+      "height": 1440
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -119,7 +119,7 @@
     "_position": {
       "__type__": "cc.Vec3",
       "x": 320,
-      "y": 480,
+      "y": 720,
       "z": 0
     },
     "_scale": {
@@ -878,9 +878,9 @@
     "_designResolution": {
       "__type__": "cc.Size",
       "width": 640,
-      "height": 960
+      "height": 1440
     },
-    "_fitWidth": true,
+    "_fitWidth": false,
     "_fitHeight": true,
     "_id": "f2IuIccydOvoVQiI/JJ9a0"
   },
@@ -913,9 +913,7 @@
     "gameMsgNode": {
       "__id__": 18
     },
-    "bgAudio": {
-      "__uuid__": "b3b7ef8e-191b-49ec-a71f-d761d712dcf5"
-    },
+    "scoreAudio": null,
     "gameOverAudio": {
       "__uuid__": "92fd3924-55d4-443b-be77-7fedbaa3f8b7"
     },
