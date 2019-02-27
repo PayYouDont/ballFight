@@ -913,7 +913,9 @@
     "gameMsgNode": {
       "__id__": 18
     },
-    "scoreAudio": null,
+    "levelUpAudio": {
+      "__uuid__": "6113f992-3c7e-4146-aab2-b1a58d1ad2d4"
+    },
     "gameOverAudio": {
       "__uuid__": "92fd3924-55d4-443b-be77-7fedbaa3f8b7"
     },

@@ -39,7 +39,7 @@ cc.Class({
             type: cc.AudioClip
         },*/
         // 得分音效资源
-        scoreAudio: {
+        levelUpAudio: {
             default: null,
             type: cc.AudioClip
         },
