@@ -50,6 +50,9 @@ cc.Class({
         },
     },
     onLoad () {
+        this.colorArr = [];
+        this.setColorArr();
+        cc.log(this.colorArr)
         let size = cc.director.getWinSizeInPixels();
         this.ground.width = size.width;
         this.ground.height = size.height;
@@ -79,6 +82,16 @@ cc.Class({
         this.stopAudio(this.gameOverAudioId);
         this.playBGMusic('http://118.24.126.134:3000/audio/backgroundMusic.m4a');
     },
+    setColorArr:function(){
+        var golden_ratio = 0.618033988749895;
+        var s = 0.3;
+        var v = 0.9;
+        for(var i=0;i<10;i++){
+            var h = Math.random();
+            var color = this.hsvtorgb(h,s,v);
+            this.colorArr.push(color)
+        }
+    },
     playBGMusic(url){
         this.bgMusic.src = url;
         this.bgMusic.play();
@@ -107,6 +120,8 @@ cc.Class({
         // 设置Circl大小
         newCircle.width =  randLeve*10;
         newCircle.height =  randLeve*10;
+        var randIndex = parseInt(Math.random()*this.colorArr.length);
+        newCircle.color = cc.color(this.colorArr[randIndex]);
         // 将新增的节点添加到 Canvas 节点下面
         this.node.addChild(newCircle);
         // 为Circle设置一个随机位置
@@ -224,4 +239,49 @@ cc.Class({
         }
         this.currentCirclePool = new Array();
     },
+    hsvtorgb:function (h, s, v) {
+        var h_i = parseInt(h * 6);
+        var f = h * 6 - h_i;
+        var p = v * (1 - s);
+        var q = v * (1 - f * s);
+        var t = v * (1 - (1 - f) * s);
+        var r, g, b;
+        switch (h_i) {
+            case 0:
+                r = v;
+                g = t;
+                b = p;
+                break;
+            case 1:
+                r = q;
+                g = v;
+                b = p;
+                break;
+            case 2:
+                r = p;
+                g = v;
+                b = t;
+                break;
+            case 3 :
+                r = p;
+                g = q;
+                b = v;
+                break;
+            case 4:
+                r = t;
+                g = p;
+                b = v;
+                break;
+            case 5:
+                r = v;
+                g = p;
+                b = q;
+                break;
+            default:
+                r = 1;
+                g = 1;
+                b = 1;
+        }
+        return new cc.color(parseInt(r*255),parseInt(g*255),parseInt(b*255));
+    }
 });

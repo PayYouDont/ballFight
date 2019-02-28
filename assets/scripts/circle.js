@@ -11,12 +11,14 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
+        colorArr:[],
         color:cc.color(100,100,100,255),
         level:1
     },
 
     onLoad () {
         this.enabled = false;
+        this.colorArr = [cc.Color.BLUE,cc.Color.BLACK,cc.Color.CYAN,cc.Color.GREEN,cc.Color.ORANGE,cc.Color.RED,cc.Color.YELLOW];
     },
     init: function (game) {
         this.game = game;
