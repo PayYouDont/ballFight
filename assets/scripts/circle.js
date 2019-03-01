@@ -13,7 +13,8 @@ cc.Class({
     properties: {
         colorArr:[],
         color:cc.color(100,100,100,255),
-        level:1
+        level:0,
+        sizeRate:5
     },
 
     onLoad () {
@@ -42,8 +43,6 @@ cc.Class({
         }else{
            this.game.gameOver();
         }
-        // 当circle被收集时，调用 Game 脚本中的接口，销毁当前circle节点，生成一个新的circle
-        //this.game.spawnNewCircle();
     },
     update (dt) {
         // 每帧判断和主角之间的距离是否小于收集距离
@@ -56,5 +55,8 @@ cc.Class({
     },
     setLevel:function(level){
         this.level = level;
+    },
+    initSize:function(){
+        this.node.setContentSize(20+this.level*this.sizeRate,20+this.level*this.sizeRate);
     }
 });

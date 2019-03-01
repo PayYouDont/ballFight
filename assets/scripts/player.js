@@ -3,10 +3,16 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
-        level:0
+        level:0,
+        sizeRate:5,
+        lvelveUpAnimation:{
+          default:null,
+          type:cc.Animation
+        },
     },
     onLoad () {
         this.updateSize();
+        this.lvelveUpAnimation.node.active = false;
     },
     getCenterPos: function () {
         var centerPos = cc.v2(this.node.x, this.node.y + this.node.height/2);
@@ -18,7 +24,7 @@ cc.Class({
         this.setMoveAction();
     },
     updateSize:function(){
-        this.node.setContentSize(this.level*10,this.level*10);
+        this.node.setContentSize(20+this.level*this.sizeRate,20+this.level*this.sizeRate);
     },
     setMoveAction:function(){
         this.node.parent.on(cc.Node.EventType.TOUCH_MOVE, function (event) {
@@ -40,5 +46,9 @@ cc.Class({
     },
     stopMove:function () {
         this.node.parent.off(this.node);
+    },
+    playLvelveUpAnimation:function(){
+        this.lvelveUpAnimation.node.active = true;
+        this.lvelveUpAnimation.play();
     }
 });

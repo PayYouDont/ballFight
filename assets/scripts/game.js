@@ -25,6 +25,14 @@ cc.Class({
             default: null,
             type: cc.Label
         },
+        levelLabel: {
+            default: null,
+            type: cc.Label
+        },
+        ballsLabel: {
+            default: null,
+            type: cc.Label
+        },
         gameOverNode: {
             default: null,
             type: cc.Node
@@ -33,11 +41,6 @@ cc.Class({
             default: null,
             type: cc.Node
         },
-        // 背景音乐资源
-        /*bgAudio: {
-            default: null,
-            type: cc.AudioClip
-        },*/
         // 得分音效资源
         levelUpAudio: {
             default: null,
@@ -48,11 +51,12 @@ cc.Class({
             default: null,
             type: cc.AudioClip
         },
+        seed:-1,
+        circleCount:20
     },
     onLoad () {
         this.colorArr = [];
         this.setColorArr();
-        cc.log(this.colorArr)
         let size = cc.director.getWinSizeInPixels();
         this.ground.width = size.width;
         this.ground.height = size.height;
@@ -65,11 +69,13 @@ cc.Class({
         var scoreLabelX = this.node.width/2-this.scoreDisplay.node.width-20;
         var scoreLabelY = this.node.height/2-this.scoreDisplay.node.height-20;
         this.scoreDisplay.node.setPosition(scoreLabelX,scoreLabelY);
+        this.levelLabel.node.setPosition(this.scoreDisplay.node.x - this.scoreDisplay.node.width - 20, this.scoreDisplay.node.y);
+        this.ballsLabel.node.setPosition(this.levelLabel.node.x - this.levelLabel.node.width - 30,this.scoreDisplay.node.y);
         this.baseSped = this.node.width/3;
     },
     onStartGame: function () {
-        this.bgMusic = new Audio();
         this.resetScore();
+        this.bgMusic = new Audio();
         this.startBtn.node.active = false; //隐藏
         this.enabled = true;
         this.gameOverNode.active = false;
@@ -84,13 +90,20 @@ cc.Class({
     },
     setColorArr:function(){
         var golden_ratio = 0.618033988749895;
-        var s = 0.3;
-        var v = 0.9;
-        for(var i=0;i<10;i++){
-            var h = Math.random();
+        var s = 0.5;
+        var v = 0.999;
+        for(var i=0;i<this.circleCount;i++){
+            var h = golden_ratio + this.seededRandom(-0.5,0.3);
             var color = this.hsvtorgb(h,s,v);
             this.colorArr.push(color)
         }
+    },
+    seededRandom:function(max, min) {//伪随机数（关于伪随机数的运用可以百度下，挺有意思的）
+        max = max || 1;
+        min = min || 0;
+        this.seed = (this.seed * 9301 + 49297) % 233280;
+        var rnd = this.seed / 233280.0;
+        return min + rnd * (max - min);
     },
     playBGMusic(url){
         this.bgMusic.src = url;
@@ -115,11 +128,16 @@ cc.Class({
             this.currentCirclePool.push(newCircle);
         }
         // 设置Circl级别
-        var randLeve = parseInt(Math.random()*(this.player.level+2));
+        //var randLeve = parseInt(Math.random()*(this.player.level+2))
+        var randLeve;
+        if(this.player.level>2){
+            randLeve = this.player.level+ Math.round(Math.random() * 4) - 2; //四舍五入
+        }else{
+            randLeve = parseInt(Math.random()*(this.player.level+2));
+        }
         newCircle.getComponent('circle').setLevel(randLeve);
         // 设置Circl大小
-        newCircle.width =  randLeve*10;
-        newCircle.height =  randLeve*10;
+        newCircle.getComponent('circle').initSize();
         var randIndex = parseInt(Math.random()*this.colorArr.length);
         newCircle.color = cc.color(this.colorArr[randIndex]);
         // 将新增的节点添加到 Canvas 节点下面
@@ -132,7 +150,7 @@ cc.Class({
         //设置circle运动
         this.setNewCircleMove(newCircle);
         newCircle.getComponent('circle').init(this);
-        if(this.currentCirclePool.length<20){
+        if(this.currentCirclePool.length<this.circleCount){
             this.spawnNewCircle();
         }
     },
@@ -208,6 +226,8 @@ cc.Class({
     resetScore: function () {
         this.score = 0;
         this.scoreDisplay.string = 'Score: ' + this.score.toString();
+        this.levelLabel.string = 'level: ' + this.player.level.toString();
+        this.ballsLabel.string = 'balls: ' + this.circleCount.toString();
         this.player.level = 2;
         this.player.updateSize();
     },
@@ -217,11 +237,18 @@ cc.Class({
         this.scoreDisplay.string = 'Score: ' + this.score.toString();
         circle.node.removeFromParent();
         this.spawnNewCircle();
-        this.player.level = this.score/10+2;
-        if(this.score%10==0){
+        if(this.score % 10 == 0){
+            this.player.level = this.score/10+1;
             this.playAudio(this.levelUpAudio,false);
+            if(this.player.level<=10){
+                this.levelLabel.string = 'level: ' + this.player.level.toString();
+                this.player.updateSize();
+                this.player.playLvelveUpAnimation();
+            }else{
+                this.circleCount++;
+                this.ballsLabel.string = 'balls: ' + this.circleCount.toString();
+            }
         }
-        this.player.updateSize();
     },
     gameOver: function () {
         this.gameOverNode.active = true;
@@ -282,6 +309,9 @@ cc.Class({
                 g = 1;
                 b = 1;
         }
-        return new cc.color(parseInt(r*255),parseInt(g*255),parseInt(b*255));
+        r = r * 255;
+        g = g * 255;
+        b = b * 255;
+        return new cc.color(r , g, b);
     }
 });
