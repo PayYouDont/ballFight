@@ -225,10 +225,10 @@ cc.Class({
     },
     resetScore: function () {
         this.score = 0;
+        this.player.level = 1;
         this.scoreDisplay.string = 'Score: ' + this.score.toString();
         this.levelLabel.string = 'level: ' + this.player.level.toString();
         this.ballsLabel.string = 'balls: ' + this.circleCount.toString();
-        this.player.level = 2;
         this.player.updateSize();
     },
     gainScore: function (circle) {
