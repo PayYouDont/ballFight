@@ -41,6 +41,10 @@ cc.Class({
             default: null,
             type: cc.Node
         },
+        bgAudio: {
+            default: null,
+            type: cc.AudioClip
+        },
         // 得分音效资源
         levelUpAudio: {
             default: null,
@@ -86,7 +90,8 @@ cc.Class({
             this.spawnNewCircle();
         },1, 0);
         this.stopAudio(this.gameOverAudioId);
-        this.playBGMusic('http://118.24.126.134:3000/audio/backgroundMusic.m4a');
+        //this.playBGMusic('http://118.24.126.134:3000/audio/backgroundMusic.m4a');
+        this.bgAudioId = this.playAudio(this.bgAudio,true);
     },
     setColorArr:function(){
         var golden_ratio = 0.618033988749895;
@@ -105,13 +110,13 @@ cc.Class({
         var rnd = this.seed / 233280.0;
         return min + rnd * (max - min);
     },
-    playBGMusic(url){
+    /*playBGMusic(url){
         this.bgMusic.src = url;
         this.bgMusic.play();
     },
     stopBGMusic:function(){
         this.bgMusic.pause();
-    },
+    },*/
     playAudio:function(audio,loop){
         return cc.audioEngine.playEffect(audio, loop);
     },
@@ -256,7 +261,8 @@ cc.Class({
         this.player.stopMove();
         this.destroyCurrentCircles();
         this.startBtn.node.active = true;
-        this.stopBGMusic();
+        //this.stopBGMusic();
+        this.stopAudio(this.bgAudioId);
         this.gameOverAudioId = this.playAudio(this.gameOverAudio,false);
     },
     destroyCurrentCircles:function(){
